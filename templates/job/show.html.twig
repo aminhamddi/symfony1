@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }} -Edit 
+{% endblock %}
+
+{% block titre %}
+    {{ parent() | upper }} Consultation du job {{ job.getType()}}
+{% endblock %}
+{% block body %}
+    <h2> Entreprise : {{ job.company}}</h2>
+    <h2> Description : {{ job.description}}</h2>
+    <h2> Date d'expiration : {{ job.getExpireAt() | date('d-m-Y') }}
+    
+{% endblock %}
