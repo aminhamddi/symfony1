@@ -9,6 +9,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Job;
 use App\Entity\Image;
 use App\Entity\Candidature;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\HttpFoundation\Request;
 
 class JobController extends AbstractController
 {
@@ -70,4 +77,32 @@ class JobController extends AbstractController
         'listCandidatures' => $listCandidatures,
         ]);;
     }
+    #[Route("/Ajouter",name:"add_candidat")]
+        public function ajouter_cand(Request $request,EntityManagerInterface $em)
+        {
+            $candidat = new Candidature();
+            $fb = $this->createFormBuilder($candidat)
+                ->add('condidat',TextType::class)
+                ->add('contenu',TextType::class,array("label" => "Contenu"))
+                ->add('date',DateType::class)
+                ->add('job',EntityType::class,['class' => Job::class,
+                'choice_label' => 'type',
+                ])
+                ->add('valider',SubmitType::class);
+            $form = $fb->getForm();
+            //Injection dans la base de donnée
+            $form->handleRequest($request);
+            
+            if ($form->isSubmitted()) { 
+                $em->persist($candidat);
+                $em->flush();
+                return $this->redirectToRoute('Acceuil');
+                
+            }
+            return $this->render('job/ajouter.html.twig',
+            ['f' => $form->createView()]);
+        }
 }
+
+
+
