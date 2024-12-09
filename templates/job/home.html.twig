@@ -24,7 +24,9 @@
 <td>{{ candidat.contenu }}</td>
 <td>
 <a class="btn btn-primary" href="#">voir</a>
-<a class="btn btn-success" href="#"> Modifier</a>
+<a class="btn btn-success" href="{{ path('edit_user', {'id':candidat.id }) }}"
+onclick="return confirm('Are you sure to update!{{ candidat.condidat
+}}')"> Modifier</a>
 <a class="btn btn-danger" href="{{ path('cand_delete', {'id':candidat.id }) }}"
 onclick="return confirm('Are you sure to delete!{{ candidat.condidat
 }}')">Supprimer</a>

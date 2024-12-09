@@ -20,7 +20,7 @@ class JobType extends AbstractType
             ->add('description')
             ->add('expire_at')
             ->add('email')
-
+            ->add('image')
             ->add('image',EntityType::class,[
                 'class' => Image::class,
                 'choice_label' => 'id',

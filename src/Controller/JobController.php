@@ -98,7 +98,7 @@ class JobController extends AbstractController
             if ($form->isSubmitted()) { 
                 $em->persist($candidat);
                 $em->flush();
-                return $this->redirectToRoute('Acceuil');
+                return $this->redirectToRoute('home');
                 
             }
             return $this->render('job/ajouter.html.twig',
@@ -132,7 +132,7 @@ class JobController extends AbstractController
                 $em->flush();
                 
                 // Redirection après la soumission réussie
-                return $this->redirectToRoute('Acceuil');
+                return $this->redirectToRoute('home');
             }
         
             // Rendu du formulaire dans la vue
@@ -178,7 +178,7 @@ class JobController extends AbstractController
                 );
         }
         $fb = $this->createFormBuilder($candidat)
-        ->add('candidat', TextType::class)
+        ->add('condidat', TextType::class)
         ->add('contenu', TextType::class, array("label" => "Contenu"))
         ->add('date', DateType::class)
         ->add('job', EntityType::class, [
@@ -199,6 +199,3 @@ class JobController extends AbstractController
         ['f' => $form->createView()] );
     }    
 }
-
-
-
