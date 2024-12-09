@@ -1,57 +1,53 @@
-# This workflow uses third-party actions and is governed by separate terms of service.
-
-name: Symfony
+name: Symfony Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
   symfony-tests:
-    runs-on: ubuntu-22.04 # Explicitly specify Ubuntu version
+    runs-on: ubuntu-latest
 
     steps:
-      # Set up PHP environment
-      - name: Set up PHP
+      # Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
-      
-      # Checkout code
+          php-version: 8.0
+          extensions: mbstring, intl, pdo, pdo_mysql
+          tools: composer
+
+      # Check out the code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Ensure the .env.test.local file exists
-      - name: Copy .env.test.local
-        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+      # Set up environment variables
+      - name: Set environment file
+        run: |
+          php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
 
-      # Cache Composer packages
-      - name: Cache Composer packages
-        id: composer-cache
+      # Cache Composer dependencies
+      - name: Cache dependencies
         uses: actions/cache@v3
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          restore-keys: ${{ runner.os }}-php-
 
       # Install dependencies
-      - name: Install Dependencies
-        run: composer install --no-ansi --no-interaction --no-progress --prefer-dist
+      - name: Install dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        continue-on-error: true
 
-      # Create SQLite database
-      - name: Create Database
-        run: |
-          mkdir -p data
-          touch data/database.sqlite
+      # Update dependencies if installation fails
+      - name: Update dependencies (if needed)
+        if: failure()
+        run: composer update --no-ansi --no-interaction --no-progress
 
-      # Run PHPUnit tests
-      - name: Execute Tests via PHPUnit
-        env:
-          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-        run: vendor/bin/phpunit
+      # Run Symfony tests
+      - name: Run tests
+        run: ./bin/phpunit
