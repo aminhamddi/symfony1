@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CandidatureRepository;
@@ -20,13 +19,12 @@ class Candidature
     #[ORM\Column(type: Types::TEXT)]
     private ?string $Contenu = null;
 
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?job $job = null;
+    private ?Job $job = null;  // Changed from ?job to ?Job
 
     public function getId(): ?int
     {
@@ -57,7 +55,6 @@ class Candidature
         return $this;
     }
 
-
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -70,12 +67,12 @@ class Candidature
         return $this;
     }
 
-    public function getJob(): ?job
+    public function getJob(): ?Job  // Changed from job to Job
     {
         return $this->job;
     }
 
-    public function setJob(?job $job): static
+    public function setJob(?Job $job): static  // Changed from job to Job
     {
         $this->job = $job;
 
